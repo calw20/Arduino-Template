@@ -68,6 +68,8 @@
     #define DBG_FPRINT_SVLN(...)
     #define DBG_PRINTF(...)
     #define DBG_PRINTFN(...)
+    #define DBG_FPRINTF(...)
+    #define DBG_FPRINTFN(...)
 #endif
 
 #endif
