@@ -1,0 +1,4 @@
+{
+    "[cpp]": {"editor.rulers": [80, 100, 120]},
+    "arduino.defaultBaudRate": 115200,
+}
