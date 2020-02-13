@@ -22,4 +22,4 @@ svn export https://github.com/calw20/Arduino-Template/trunk/
 ```
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](LICENSE)
