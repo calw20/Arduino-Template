@@ -21,7 +21,7 @@ Build_Date = datetime.datetime.now().strftime("%d-%m-%y - %H:%M:%S")
 #Default JSON Object
 headerSettings = {
     #Basic Settings
-    "header_file": "./build_headers.h", #The name of the header file
+    "header_file": "./include/build_headers.h", #The name of the header file
     "update_header_file": True, #Should the header file be updated?
     "print_headers": True, #Should the headers be logged to console?
     "info_print": True, #Should info statements be logged?
