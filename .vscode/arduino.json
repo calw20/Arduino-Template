@@ -1,6 +1,6 @@
 {
     "sketch": "main.ino",
     "programmer": "AVRISP mkII",
-    "output": "../.build/${workspaceFolderBasename}",
+    "output": "../.build",
     "prebuild": "./genHeaders.py"
 }
