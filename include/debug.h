@@ -6,11 +6,7 @@
 #if __has_include("build_headers.h")
     #include "build_headers.h"
 #else
-    #if __has_include("../build_headers.h")
-        #include "../build_headers.h"
-    #else
-        #warning "Auto-Generated build_headers.h file not found."
-    #endif
+    #warning "Auto-Generated build_headers.h file not found."
 #endif
 #ifndef BUILD_DATE
     #define BUILD_DATE "N.A."
