@@ -2,8 +2,21 @@
 //Cal.W 2020
 //Adapted from https://forum.arduino.cc/index.php?topic=370464.msg4117945#msg4117945
 
-#ifndef PRINTF
-#define PRINTF
+#ifndef __PRINTF_H__
+#define __PRINTF_H__
+
+/* Right So
+/  First pick a deity of your liking...
+/  NOW; CURSE, SWEAR, KICK AND SCREAM AT IT FOR THE PAIN THAT WAS SUFFERED. 
+\  (╯°□°）╯︵ ┻━┻)
+/  Now thats' overwith; For some reason when "compiling"/"processing" a chain
+/  of headers something borks and the pre-processor and/or linker kick and scream
+/  about "expected unqualified-id before [blah]" crud. The "Arduino.h" does _something_
+/  to fix it. If you know what please let me know as I have no idea why it works,
+/  I just know it does. [Cal]
+?  (ヘ･_･)ヘ┳━┳
+*/
+#include "Arduino.h"
 
 #ifndef _PRINTF_BUFFER_LENGTH_
     #define _PRINTF_BUFFER_LENGTH_  64

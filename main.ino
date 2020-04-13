@@ -1,4 +1,4 @@
-#include "include/debug.h"
+#include "src/debug/debug.h"
 
 void setup(){
 	

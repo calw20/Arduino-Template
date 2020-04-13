@@ -1,13 +1,18 @@
 //My Commonly used Debug macros
 //Cal.W 2020
-#ifndef DEBUG_OPTIONS
-#define DEBUG_OPTIONS
+#ifndef __DEBUG_H__
+#define __DEBUG_H__
+
+//HOLY GOOD LORD AND F..._RI_CK. 7 HOURS AND THE PROBLEM WAS ONE LINE.
+//See printf.h for more info
+#include "Arduino.h" 
 
 #if __has_include("build_headers.h")
     #include "build_headers.h"
 #else
-    #warning "Auto-Generated build_headers.h file not found."
+    #warning "Auto-Generated build_headers.h file not found."    
 #endif
+
 #ifndef BUILD_DATE
     #define BUILD_DATE "N.A."
 #endif
@@ -34,16 +39,23 @@
 #if DO_DEBUG
     //^ Nice Debug Functions -> They only work if debugging is enabled  
     #pragma message "Debuging messages enabled."
-    #define DBG_PRINT(text,...)    Serial.print(text, ##__VA_ARGS__)       //Normal Print
-    #define DBG_PRINTLN(text,...)  Serial.println(text, ##__VA_ARGS__)     //Normal Println
-    #define DBG_FPRINT(text,...)   DBG_PRINT(F(text), ##__VA_ARGS__)       //These two puts the string into SRAM (Saves Space)
+    
+    //Where should the debug output be written to?
+    #ifndef DBG_OUT_OBJ
+        #define DBG_OUT_OBJ Serial
+    #endif
+
+    #define DBG_PRINT(text,...)    DBG_OUT_OBJ.print(text, ##__VA_ARGS__)    //Normal Print
+    #define DBG_PRINTLN(text,...)  DBG_OUT_OBJ.println(text, ##__VA_ARGS__)  //Normal Println
+    #define DBG_FPRINT(text,...)   DBG_PRINT(F(text), ##__VA_ARGS__)         //These two puts the string into SRAM (Saves Space)
     #define DBG_FPRINTLN(text,...) DBG_PRINTLN(F(text), ##__VA_ARGS__)
     #define DBG_FPRINT_SV(text,value,...)   do{ DBG_FPRINT(text); DBG_PRINT(value, ##__VA_ARGS__);   } while(0)
     #define DBG_FPRINT_SVLN(text,value,...) do{ DBG_FPRINT(text); DBG_PRINTLN(value, ##__VA_ARGS__); } while(0)
 
-    #ifdef PRINTF
-        #define DBG_PRINTF(...)  printf(Serial, __VA_ARGS__)
-        #define DBG_PRINTFN(...) printfn(Serial, __VA_ARGS__)
+    #ifdef __PRINTF_H__
+        #define DBG_PRINTF(...)  printf(DBG_OUT_OBJ, __VA_ARGS__)
+        #define DBG_PRINTFN(...) printfn(DBG_OUT_OBJ, __VA_ARGS__)
+
         #define DBG_FPRINTF(fText,sText,...)  do{ DBG_FPRINT(fText); DBG_PRINTF(sText, ##__VA_ARGS__);  }while(0)
         #define DBG_FPRINTFN(fText,sText,...) do{ DBG_FPRINT(fText); DBG_PRINTFN(sText, ##__VA_ARGS__); }while(0)
     #else
@@ -66,6 +78,35 @@
     #define DBG_PRINTFN(...)
     #define DBG_FPRINTF(...)
     #define DBG_FPRINTFN(...)
+#endif
+
+
+
+#ifndef CRITICAL_LED
+    #define CRITICAL_LED LED_BUILTIN
+#endif
+
+//Wrap the function in a macro to make debugging easier
+#define CRITICAL_FAIL(...) criticalFailure(__FUNCTION__, __FILE__, __LINE__)
+
+void criticalFailure(const char* func, const char* file, u16 failLine);
+void printDebug(String printValues);
+void printDebug(String printValues = "HTB");
+
+
+
+
+
+#ifndef DEBUG_DUMP
+    #define DEBUG_DUMP
+    #define EXTRA_DUMPS()
+    
+    /*#include
+    #define EXTRA_DUMPS() do {
+
+    }while(0)*/
+#else
+    #define EXTRA_DUMPS()
 #endif
 
 #endif
