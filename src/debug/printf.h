@@ -1,6 +1,7 @@
 //Create macros to add in printf
-//Cal.W 2020
 //Adapted from https://forum.arduino.cc/index.php?topic=370464.msg4117945#msg4117945
+//Licensed under MIT, See the LICENCE file. 
+//Cal.W 2020
 
 #ifndef __PRINTF_H__
 #define __PRINTF_H__
