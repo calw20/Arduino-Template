@@ -8,6 +8,7 @@
 //This is very much needed -> See printf.h for more info
 #include "Arduino.h"
 
+//Attempt to include the auto-generated program header version.
 #if __has_include("build_headers.h")
     #include "build_headers.h"
 #else
@@ -32,65 +33,10 @@
 //Add in all the debug console print macros
 #include "debug_console_print.h"
 
-//When creating a list what should the inital array length be?
-#ifndef INITAL_LIST_LENGTH
-    #define INITAL_LIST_LENGTH 5
-#endif
-
-#ifndef INC_CAPACITY
-    #define INC_CAPACITY(capacity) capacity + 2
-#endif
-
-/*As of Apr 2020 ONLY the debug handler has a critical error function
-    //This is the container to hold the functions to be run on a critical failure
-    typedef void (*CriticalFailureFunctions) (const char* func, const char* file, u16 failLine);
-    class CriticalFailureFunctionList {
-        public:
-            CriticalFailureFunctionList();
-            ~CriticalFailureFunctionList();
-            bool appendFunction(void appFunc&); 
-            void runFunctions();
-        private:
-            CriticalFailureFunctions* funcList;
-            int length, capacity;
-    };
-*/
-
-typedef void (*DebugPrintFunction) (String);
-//This is the container to hold the functions to be run on a debug print
-class DebugPrintFunctionList {
-    public:
-        //DebugPrintFunctionList(int newCapacity);
-        DebugPrintFunctionList(int newCapacity = INITAL_LIST_LENGTH);
-        ~DebugPrintFunctionList();
-        bool append(DebugPrintFunction appFunc);
-        //bool remove(int funcIndex); //^May not include?
-        void runFunctions(String printValues);
-
-    private:
-        int length, capacity;
-        DebugPrintFunction* funcList;
-};
-
-//The debugger class for simple multi-class debugging
-class DebugHandler {
-    public:
-        DebugHandler();
-        void criticalFailure(const char* func, const char* file, u16 failLine);
-        //void printDebug(String printValues);       
-        void printDebug(String printValues = "HTB");
-    private:
-        //CriticalFailureFunctionList critFuncs; //?See line 84
-        static void debugPrintHeader(String printValues);
-        DebugPrintFunctionList debugFuncs;
-};
-
+//What output pin is flashed on a critical failure? 
 #ifndef CRITICAL_LED
     #define CRITICAL_LED LED_BUILTIN
 #endif
-
-//Wrap the function in a macro to make debugging easier
-#define CRITICAL_FAIL(Debugger) Debugger.criticalFailure(__FUNCTION__, __FILE__, __LINE__)
 
 
 #endif
