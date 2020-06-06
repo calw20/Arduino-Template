@@ -2,5 +2,8 @@
     "sketch": "main.ino",
     "programmer": "AVRISP mkII",
     "output": "../.build",
-    "prebuild": "./genHeaders.py"
+    "prebuild": "genHeaders.py",
+    "board": "arduino:avr:mega",
+    "configuration": "cpu=atmega2560,printf=full,macro_expansion=default,caret=none",
+    "port": "COM4"
 }

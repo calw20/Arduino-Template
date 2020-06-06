@@ -1,0 +1,28 @@
+{
+    "header_file": "./src/debug/build_headers.h",
+    "update_header_file": true,
+    "print_headers": true,
+    "info_print": true,
+    "increment_version": true,
+    "include_header_guard": true,
+    "header_guard_name": "AUTOGEN_H",
+    "define_block": "#define {0} {1}",
+    "header_injection": {
+        "pre_guard": "//This is a auto generated file.\n//Cal.W 2020",
+        "post_guard": "",
+        "pre_footer": ""
+    },
+    "build_date": "14-04-20 - 22:24:08",
+    "build_version": [
+        0,
+        0,
+        64,
+        "Alpha"
+    ],
+    "other_headers": [
+        [
+            "DO_DEBUG",
+            true
+        ]
+    ]
+}

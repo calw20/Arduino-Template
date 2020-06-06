@@ -36,6 +36,8 @@ bool DebugPrintFunctionList::append(DebugPrintFunction appFunc){
     }
     //Now we can add the new item
     funcList[length] = appFunc; //?The length is the last element in the list 
+    DBG_PRINTFN("runFuncs2: %i, %p", funcList[i], funcList[i]);
+    
     length++;
     return true;
 }
@@ -50,9 +52,9 @@ bool DebugPrintFunctionList::remove(int funcIndex){
 //Run all the functions in the list
 void DebugPrintFunctionList::runFunctions(String printValues){
     for (int i = 0; i < capacity; i++){
-        DBG_PRINTFN("runFuncs: %i, %p", &funcList[i], funcList[i]);
+        DBG_PRINTFN("runFuncs: %i, %p", funcList[i], funcList[i]);
         
-        funcList[i](printValues);
+        funcList[i](printValues); 
     }
 }
 
