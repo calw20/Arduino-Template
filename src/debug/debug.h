@@ -38,5 +38,57 @@
     #define CRITICAL_LED LED_BUILTIN
 #endif
 
+//Start code defs
+
+//How can a module crash?
+const char ChrashTypeText[6][10] = {"No", "Minor", "Major", "Fatal", /*"Irrecoverable",*/ "Critical"};
+enum ChrashType {None, Minor, Major, Fatal, /*Irrecoverable,*/  Critical };
+
+class GenericCrashable {
+    public:
+        virtual void genericError(const char* func, const char* file, u16 failLine); 
+        virtual void minorFailure(const char* func, const char* file, u16 failLine);
+        virtual void majorFailure(const char* func, const char* file, u16 failLine);
+        virtual void criticalFailure(const char* func, const char* file, u16 failLine);
+        virtual ChrashType getStatus();
+        
+    private:
+        ChrashType status = ChrashType::None;
+};
+
+
+//The Following are linked together. - lets us do things like "parent->criticalFailure()"
+class CrashableModule; //Just don't, its needed to keep the compiler happy
+
+#ifndef MIN_CHILDREN_LENGTH
+    #define MIN_CHILDREN_LENGTH 10
+#endif
+
+//The Level0 or Kernel base partent object
+class UnCrashable : public GenericCrashable {
+    public:
+        UnCrashable();
+        //~UnCrashable();
+        virtual bool addModule(CrashableModule &module);
+        virtual bool addModule(CrashableModule &module, int id);
+        virtual void genericError(const char* func, const char* file, u16 failLine);
+
+    private:
+        CrashableModule *modules[MIN_CHILDREN_LENGTH];
+
+};
+
+
+//A Chrashable Module
+class CrashableModule : public GenericCrashable{
+    public:
+        CrashableModule(UnCrashable &parent, bool addSelfToParent = true);
+        //~CrashableModule();
+
+    private:
+        UnCrashable *parent;
+        
+
+};
 
 #endif
