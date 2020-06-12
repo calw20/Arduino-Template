@@ -20,7 +20,7 @@
 #include "Arduino.h"
 
 #ifndef _PRINTF_BUFFER_LENGTH_
-    #define _PRINTF_BUFFER_LENGTH_  64
+    #define _PRINTF_BUFFER_LENGTH_ 128
 #endif
 
 static char _pf_buffer_[_PRINTF_BUFFER_LENGTH_];
