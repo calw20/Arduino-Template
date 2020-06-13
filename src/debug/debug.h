@@ -39,6 +39,7 @@
 #endif
 
 //Wrap the function in a macro to make debugging easier
+#define CRITICAL_MODULE_FAIL(Module) Module.criticalFailure(__FUNCTION__, __FILE__, __LINE__)
 #define CRITICAL_FAIL(...) do{ status = ChrashType::Critical; parent->criticalFailure(__FUNCTION__, __FILE__, __LINE__);}while(0)
 
 //Start code defs
