@@ -32,7 +32,7 @@ void setup(){
     DemoRoot.addModule(Mod3);
     
     DemoRoot.minorFailure(__FUNCTION__, __FILE__, __LINE__);
-    
+
     Serial.println("============= Stop =============");
 
 }

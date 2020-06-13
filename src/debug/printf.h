@@ -19,6 +19,7 @@
 */
 #include "Arduino.h"
 
+//How many chars can the sprint buffer have allocated?
 #ifndef _PRINTF_BUFFER_LENGTH_
     #define _PRINTF_BUFFER_LENGTH_ 128
 #endif

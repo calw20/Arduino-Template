@@ -5,7 +5,6 @@
 #ifndef __DEBUG_CONSOLE_PRINT__
 #define __DEBUG_CONSOLE_PRINT__
 
-
 #include "Arduino.h" 
 
 //If present then include the macro-wrapped printf functions based on sprint
@@ -20,11 +19,17 @@
     #define DO_DEBUG false
 #endif
 
+#ifndef PRINT_PRAGMA_MESSAGES
+    #define PRINT_PRAGMA_MESSAGES false
+#endif
+
 //^ Debug Print Functions
 #if DO_DEBUG
     //^ Nice Debug Functions -> They only work if debugging is enabled  
-    #pragma message "Debuging messages enabled."
-    
+    #if PRINT_PRAGMA_MESSAGES
+        #pragma message "Debuging messages enabled."
+    #endif
+
     //Where should the debug output be written to?
     #ifndef DBG_OUT_OBJ
         #define DBG_OUT_OBJ Serial
