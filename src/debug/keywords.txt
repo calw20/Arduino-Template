@@ -1,0 +1,69 @@
+#################################################
+#Syntax Coloring for the default Arduino IDE
+#################################################
+#Class
+#################################################
+
+#Debug Keywords
+#Classes
+GenericCrashable	KEYWORD1
+CrashableModule	KEYWORD1
+UnCrashable	KEYWORD1
+CrashableModule	KEYWORD1
+
+#################################################
+#Methods, Functions and PreCompiler Mappings
+#################################################
+
+#Debug Keywords
+##Class Constructors
+UnCrashable	KEYWORD2
+CrashableModule	KEYWORD2
+
+##Class Methods
+init	KEYWORD2
+genericError	KEYWORD2
+minorFailure	KEYWORD2
+majorFailure	KEYWORD2
+criticalFailure	KEYWORD2
+printDebug	KEYWORD2
+getStatus	KEYWORD2
+
+##PreCompiler Mappings
+CHK_LETTER	KEYWORD2
+CRITICAL_FAIL	KEYWORD2
+
+#Debug Console Keywords
+DBG_PRINT	KEYWORD2
+DBG_PRINTLN	KEYWORD2
+DBG_FPRINT	KEYWORD2
+DBG_FPRINTLN	KEYWORD2
+DBG_FPRINT_SV	KEYWORD2
+DBG_FPRINT_SVLN	KEYWORD2
+DBG_PRINTF	KEYWORD2
+DBG_PRINTFN	KEYWORD2
+DBG_FPRINTF	KEYWORD2
+DBG_FPRINTFN	KEYWORD2
+
+#Printf Keywords
+printf	KEYWORD2
+printfn	KEYWORD2
+
+#################################################
+#Constants and Structures
+#################################################
+
+#Debug Keywords
+##Compiler Flags
+BUILD_DATE	LITERAL1		PREPROCESSOR
+BUILD_VERSION	LITERAL1		PREPROCESSOR
+ChrashType	KEYWORD3
+
+#Debug Console Keywords
+##Compiler Flags
+DO_DEBUG	LITERAL1		PREPROCESSOR
+PRINT_PRAGMA_MESSAGES	LITERAL1		PREPROCESSOR
+DBG_OUT_OBJ	LITERAL1		PREPROCESSOR
+
+#Printf Keywords
+_PRINTF_BUFFER_LENGTH_	LITERAL1		PREPROCESSOR
