@@ -37,5 +37,4 @@ beer is always nice) but I highly doubt this will have been useful enough for th
 Enjoy and good luck!
 
 ### License
-
 [MIT](LICENSE)
