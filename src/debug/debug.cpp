@@ -7,30 +7,36 @@ bool GenericCrashable::init(){
     return true;
 }
 
+void GenericCrashable::printErrorInfo(const char* func, const char* file, u16 failLine, bool forcePrint){
+    if (forcePrint || status != CrashType::None) {
+        DBG_PRINTF("[%s] Error in [%s] at line %u in %s\r\n", ChrashTypeText[status],
+            func, failLine, file); 
+    }
+}
+
 void GenericCrashable::genericError(const char* func, const char* file, u16 failLine){
-    DBG_PRINTF("[%s] Error in [%s] at line %u in %s", ChrashTypeText[status],
-        func, failLine, file); DBG_PRINTLN();
+    printErrorInfo(func, file, failLine, true);
     printDebug();
 }
 
 void GenericCrashable::minorFailure(const char* func, const char* file, u16 failLine){
-    status = ChrashType::Minor;
+    status = CrashType::Minor;
     genericError(func, file, failLine);
 }
 
 void GenericCrashable::majorFailure(const char* func, const char* file, u16 failLine) {
-    status = ChrashType::Major;
+    status = CrashType::Major;
     genericError(func, file, failLine);
 }
 
 void GenericCrashable::criticalFailure(const char* func, const char* file, u16 failLine) {
-    status = ChrashType::Critical;
+    status = CrashType::Critical;
     genericError(func, file, failLine);
 }
 
 void GenericCrashable::printDebug(String printValues){};
 
-ChrashType GenericCrashable::getStatus(){
+CrashType GenericCrashable::getStatus(){
     return status;
 }
 
@@ -46,7 +52,7 @@ bool UnCrashable::init(){
     bool initSuccessfull = true;
     for (int i = 0; i < (sizeof(modules)/sizeof(modules[0])); i++){
         if (modules[i])
-            if( modules[i]->init())
+            if(!modules[i]->init())
                 initSuccessfull = false;
     }
     return initSuccessfull;

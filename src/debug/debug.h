@@ -46,7 +46,7 @@
 
 //How can a module crash?
 const char ChrashTypeText[6][10] = {"No", "Minor", "Major", "Fatal", /*"Irrecoverable",*/ "Critical"};
-enum ChrashType {None, Minor, Major, Fatal, /*Irrecoverable,*/  Critical };
+enum CrashType {None, Minor, Major, Fatal, /*Irrecoverable,*/  Critical };
 
 class GenericCrashable {
     public:
@@ -56,10 +56,12 @@ class GenericCrashable {
         virtual void majorFailure(const char* func, const char* file, u16 failLine);
         virtual void criticalFailure(const char* func, const char* file, u16 failLine);
         virtual void printDebug(String printValues = "");
-        virtual ChrashType getStatus();
+        virtual CrashType getStatus();
+
+        virtual void printErrorInfo(const char* func, const char* file, u16 failLine, bool forcePrint = false); 
         
     protected:
-        ChrashType status = ChrashType::None;
+        CrashType status = CrashType::None;
 };
 
 
@@ -80,6 +82,9 @@ class UnCrashable : public GenericCrashable {
         virtual bool addModule(CrashableModule &module, int id);
         virtual void genericError(const char* func, const char* file, u16 failLine);
         virtual void printDebug(String printValues);
+
+    public:
+        bool inError = false;
 
     protected:
         CrashableModule *modules[MIN_CHILDREN_LENGTH];
