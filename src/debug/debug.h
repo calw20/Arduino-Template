@@ -40,12 +40,12 @@
 
 //Wrap the function in a macro to make debugging easier
 #define CRITICAL_MODULE_FAIL(Module) Module.criticalFailure(__FUNCTION__, __FILE__, __LINE__)
-#define CRITICAL_FAIL(...) do{ status = ChrashType::Critical; parent->criticalFailure(__FUNCTION__, __FILE__, __LINE__);}while(0)
+#define CRITICAL_FAIL(...) do{ status = CrashType::Critical; parent->criticalFailure(__FUNCTION__, __FILE__, __LINE__);}while(0)
 
 //Start code defs
 
 //How can a module crash?
-const char ChrashTypeText[6][10] = {"No", "Minor", "Major", "Fatal", /*"Irrecoverable",*/ "Critical"};
+const char CrashTypeText[6][10] = {"No", "Minor", "Major", "Fatal", /*"Irrecoverable",*/ "Critical"};
 enum CrashType {None, Minor, Major, Fatal, /*Irrecoverable,*/  Critical };
 
 class GenericCrashable {
@@ -93,7 +93,7 @@ class UnCrashable : public GenericCrashable {
 };
 
 
-//A Chrashable Module
+//A Crashable Module
 class CrashableModule : public GenericCrashable{
     public:
         CrashableModule(UnCrashable &parent, bool addSelfToParent = true);
