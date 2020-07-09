@@ -40,6 +40,8 @@
 
 //Wrap the function in a macro to make debugging easier
 #define CRITICAL_MODULE_FAIL(Module) Module.criticalFailure(__FUNCTION__, __FILE__, __LINE__)
+#define MINOR_FAIL(...) do{ status = CrashType::Minor; parent->minorFailure(__FUNCTION__, __FILE__, __LINE__);}while(0)
+#define MAJOR_FAIL(...) do{ status = CrashType::Major; parent->majorFailure(__FUNCTION__, __FILE__, __LINE__);}while(0)
 #define CRITICAL_FAIL(...) do{ status = CrashType::Critical; parent->criticalFailure(__FUNCTION__, __FILE__, __LINE__);}while(0)
 
 //Start code defs
