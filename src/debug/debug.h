@@ -77,11 +77,13 @@ class UnCrashable : public GenericCrashable {
     public:
         UnCrashable();
         //~UnCrashable();
-        virtual bool init();
-        virtual bool addModule(CrashableModule &module);
-        virtual bool addModule(CrashableModule &module, int id);
-        virtual void genericError(const char* func, const char* file, u16 failLine);
-        virtual void printDebug(String printValues);
+        bool addModule(CrashableModule &module);
+        bool addModule(CrashableModule &module, int id);
+    
+    public:
+        bool init() override;
+        void genericError(const char* func, const char* file, u16 failLine) override;
+        void printDebug(String printValues) override;
 
     public:
         bool inError = false;
