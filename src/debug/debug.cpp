@@ -7,15 +7,21 @@ bool GenericCrashable::init(){
     return true;
 }
 
+CrashType GenericCrashable::setStatus(CrashType newStatus){
+    CrashType oldStatus = status;
+    status = newStatus;
+    return oldStatus;
+}
+
 void GenericCrashable::printErrorInfo(const char* func, const char* file, u16 failLine, bool forcePrint){
-    if (forcePrint || status != CrashType::None) {
-        DBG_PRINTF("[%s] Error in [%s] at line %u in %s\r\n", ChrashTypeText[status],
+    if (forcePrint || inError || status != CrashType::None) {
+        DBG_PRINTF("[%s] Error in [%s] at line %u in %s\r\n", CrashTypeText[status],
             func, failLine, file); 
     }
 }
 
 void GenericCrashable::genericError(const char* func, const char* file, u16 failLine){
-    printErrorInfo(func, file, failLine, true);
+    printErrorInfo(func, file, failLine);
     printDebug();
 }
 
@@ -99,3 +105,29 @@ CrashableModule::CrashableModule(UnCrashable &uncrashableParent, bool addSelfToP
     parent = &uncrashableParent;
     if (addSelfToParent) parent->addModule(*this); //Add itself to the parent.
 }
+
+void CrashableModule::crashParentTree(CrashType crashType, const char* func, const char* file, u16 failLine){
+    inError = true;
+    status = crashType; //Whilst the fail functs *should* do this, other CrashTypes like ::Fatal dont have methods 
+
+    switch (status){
+    case CrashType::Minor:
+        minorFailure(func, file, failLine);
+        parent->minorFailure(func, file, failLine);
+        break;
+    case CrashType::Major:
+        majorFailure(func, file, failLine);
+        parent->majorFailure(func, file, failLine);
+        break;
+    case CrashType::Critical:
+        criticalFailure(func, file, failLine);
+        parent->criticalFailure(func, file, failLine);
+        break;
+    default:
+        genericError(func, file, failLine);
+        parent->genericError(func, file, failLine);
+        break;
+    }
+    //[TODO] Decide recovery is assumed....
+    //inError = false; //We recovered from the error?!
+};
