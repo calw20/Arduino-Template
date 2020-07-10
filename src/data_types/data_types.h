@@ -2,7 +2,7 @@
 Cal.W 2020
 Common / Nice to have c++ data types / structs / unions
 Licensed under MIT, (Appended to the end of the file)
-//https://github.com/calw20/Arduino-Template/
+https://github.com/calw20/Arduino-Template/
 */
 
 #ifndef __DATA_TYPES_H__
