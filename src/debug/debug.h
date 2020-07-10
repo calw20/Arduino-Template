@@ -2,6 +2,8 @@
 //See main.ino for an example
 //Licensed under MIT, See the LICENCE file. 
 //Cal.W 2020
+//https://github.com/calw20/Arduino-Template/
+
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
