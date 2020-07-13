@@ -54,7 +54,7 @@ union v2d {
         T x;
         T y;
     };
-    T var[2];
+    T val[2];
 
     T& operator[](int i) {
         return val[i];
@@ -79,7 +79,7 @@ union v3d {
         T y;
         T z;
     };
-    T var[3];
+    T val[3];
 
     T& operator[](int i) {
         return val[i];
