@@ -42,9 +42,18 @@
 
 //Wrap the function in a macro to make debugging easier
 #define CRITICAL_MODULE_FAIL(Module) Module.criticalFailure(__FUNCTION__, __FILE__, __LINE__)
+#define MODULE_TREE_FAIL(Module, CType) Module.crashParentTree(CType, __FUNCTION__, __FILE__, __LINE__)
+
+#define MINOR_FAIL(...)     crashParentTree(CrashType::Minor, __FUNCTION__, __FILE__, __LINE__)
+#define MAJOR_FAIL(...)     crashParentTree(CrashType::Major, __FUNCTION__, __FILE__, __LINE__)
+#define CRITICAL_FAIL(...)  crashParentTree(CrashType::Critical, __FUNCTION__, __FILE__, __LINE__)
+#define OTHER_FAIL(CType)   crashParentTree(CType, __FUNCTION__, __FILE__, __LINE__)
+
+/*
 #define MINOR_FAIL(...) do{ status = CrashType::Minor; parent->minorFailure(__FUNCTION__, __FILE__, __LINE__);}while(0)
 #define MAJOR_FAIL(...) do{ status = CrashType::Major; parent->majorFailure(__FUNCTION__, __FILE__, __LINE__);}while(0)
 #define CRITICAL_FAIL(...) do{ status = CrashType::Critical; parent->criticalFailure(__FUNCTION__, __FILE__, __LINE__);}while(0)
+*/
 
 //Start code defs
 
@@ -61,9 +70,13 @@ class GenericCrashable {
         virtual void criticalFailure(const char* func, const char* file, u16 failLine);
         virtual void printDebug(String printValues = "");
         virtual CrashType getStatus();
+        virtual CrashType setStatus(CrashType newStatus);
 
         virtual void printErrorInfo(const char* func, const char* file, u16 failLine, bool forcePrint = false); 
         
+    public:
+        bool inError = false;
+
     protected:
         CrashType status = CrashType::None;
 };
@@ -89,9 +102,6 @@ class UnCrashable : public GenericCrashable {
         void genericError(const char* func, const char* file, u16 failLine) override;
         void printDebug(String printValues) override;
 
-    public:
-        bool inError = false;
-
     protected:
         CrashableModule *modules[MIN_CHILDREN_LENGTH];
         UnCrashable *parent = this;
@@ -104,6 +114,7 @@ class CrashableModule : public GenericCrashable{
     public:
         CrashableModule(UnCrashable &parent, bool addSelfToParent = true);
         //~CrashableModule();
+        void crashParentTree(CrashType crashType, const char* func, const char* file, u16 failLine);
 
     protected:
         UnCrashable *parent;

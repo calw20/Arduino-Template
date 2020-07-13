@@ -43,8 +43,8 @@ union StoredData {
     }
 };
 
-typedef StoredData<float> fStoreData;
-typedef StoredData<int> iStoreData;
+typedef StoredData<float> fStoredData;
+typedef StoredData<int> iStoredData;
 
 
 //2D Vectors
@@ -85,7 +85,7 @@ union v3d {
         return val[i];
     }
 
-    v2d& operator=(v2d vec){
+    v3d& operator=(v3d vec){
         x = vec.x;
         y = vec.y;
         z = vec.z;
