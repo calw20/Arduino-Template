@@ -26,7 +26,7 @@ svn export https://github.com/calw20/Arduino-Template/trunk/
 
 ### Uploading Arduino Code without the IDE
 
-The powershell script [Upload.ps1](Upload) will automatically download the Arduino-CLI, download set libraries,
+The powershell script [Upload](Upload.ps1) will automatically download the Arduino-CLI, download set libraries,
 run a pre-build command and upload the set file all with one click!
 
 ## License & Notes
