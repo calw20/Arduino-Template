@@ -55,12 +55,14 @@ $Choices = [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes", "&N
 #Setup User Vars
 $inoFile = "./main.ino"
 $preBuildCommand = "python ./genHeaders.py"
-$includedLibs = @('Adafruit BMP280 Library', 'SdFat')
+$includedLibs = @() #@('Adafruit BMP280 Library', 'SdFat')
 
 $doGitPull = $false
 $doPreBuild = $true
 
 $doUpload = $true
+$waitForUser = $false
+$dieOnPreBuildFail = $false
 
 $printfOpt = "Full"; $macroExpOpt = "Default"; $caretOpt = "None"
 
@@ -104,7 +106,7 @@ if ($doGitPull){
                 2 {
                     Write-Output "Canceling upload!"
                     Write-Output "You need to upload the code to the Arduino before any changes you made will be present!"
-                    Read-Host 'Press Enter to continue'
+                    if ($waitForUser) { Read-Host 'Press Enter to continue' }
                     exit
                 }
             }
@@ -177,9 +179,13 @@ if ($doPreBuild){
     if (Get-Command $cmdHead -ErrorAction SilentlyContinue) {
         Write-Output "Attemping to exicute prebuild command: `"$preBuildCommand`""
         Write-Debug "Exicuting as '$cmdHead' '$cmdArgs'"
-        Start-Process $cmdHead -ArgumentList $cmdArgs -wait -NoNewWindow
+        $preBuildProc = Start-Process $cmdHead -ArgumentList $cmdArgs -wait -NoNewWindow  -PassThru
+        if ($preBuildProc.ExitCode -ne 0){
+            Write-Warning ":( Something failed in the preBuild script!"
+            if ($dieOnPreBuildFail){ throw "PreBuild Command Failed!"}
+        }
     } else {
-        Write-Output "Could not exicute prebuild command: `"$preBuildCommand`""
+        Write-Warning "Could not exicute prebuild command: `"$preBuildCommand`""
     }
 }
 
@@ -199,8 +205,13 @@ if ($null -ne $showDiagCaretArgs[$caretOpt])
 $argList += "$serialPort $boardType "
 $argList += $uplodeArg[$doUpload] + " $inoFile"
 
-Start-Process "$idePath`\arduino_debug.exe" -ArgumentList $argList -wait -NoNewWindow
+$arduinoDebug = Start-Process "$idePath`\arduino_debug.exe" -ArgumentList $argList -wait -NoNewWindow -PassThru
 
-Write-Output "Done!"
-Read-Host 'Press Enter to continue'
+if ($arduinoDebug.ExitCode -ne 0){
+    Write-Warning ":( Something went very wrong when uploading!"
+} else {
+    Write-Host "Done!" -ForegroundColor Green
+}
+
+if ($waitForUser) { Read-Host 'Press Enter to continue' }
 exit
