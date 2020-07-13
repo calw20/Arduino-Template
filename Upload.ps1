@@ -3,12 +3,6 @@
 #Cal.W 2020
 
 <#
-\\Config File
-    \ Check that python is installed
-
-? var doMacroExspenastion = false (Append)
-? var useFullPrintf = true (Append)
-
 1) If wanted attempt to pull from git
 2) Download CLI
     2.1) Extract Zip
