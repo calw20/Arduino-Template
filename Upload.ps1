@@ -65,7 +65,7 @@ $idePath = "C:\Program Files (x86)\Arduino\"
 $libPath = [System.Environment]::GetEnvironmentVariable('userprofile')+"\Documents\Arduino\libraries"
 
 if ([System.Environment]::Is64BitOperatingSystem) {$arch = "64"} else {$arch = "32"}
-$cliPath = "./arduino-cli"
+$cliPath = $PSScriptRoot+"/arduino-cli"
 $cliURL  = "https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Windows_"+$arch+"bit.zip"
 $cliZipName = "arduino-cli.zip"
 
