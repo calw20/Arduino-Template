@@ -1,5 +1,8 @@
 # Arduino Template  
 
+[//]: # (Licensed under MIT, see LICENSE for more details)
+[//]: # (Cal.W 2020)
+
 A simple template with a few debug and build headers
 
 ## Installation
@@ -28,7 +31,8 @@ svn export https://github.com/calw20/Arduino-Template/trunk/
 
 The powershell script [Upload](Upload.ps1) will automatically download the Arduino-CLI, download set libraries,
 run a pre-build command and upload the set file all with one click!
->:notebook_with_decorative_cover: Note: You may need to run `Set-ExecutionPolicy RemoteSigned` or equivilent in an _administraor_ powershell before the script can be run.
+>:notebook_with_decorative_cover: Note: You may need to run `Set-ExecutionPolicy RemoteSigned` or equivalent in an _administrator_ powershell before the script can be run.
+
 
 ## License & Notes
 

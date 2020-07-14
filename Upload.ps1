@@ -3,6 +3,7 @@
 #Cal.W 2020
 
 <#
+\\Config File
 1) If wanted attempt to pull from git
 2) Download CLI
     2.1) Extract Zip
@@ -12,6 +13,11 @@
 5) Run Prebuild
 6) Upload / Verifiy
 #>
+
+#PramaiterInput
+param (
+    [switch]$noInput = $false
+)
 
 #Extra Compiler Args
 ##Printf Command Args
@@ -38,6 +44,14 @@ $showDiagCaretArgs = @{
     None = "-fno-diagnostics-show-caret"
 }
 
+##Verbosity
+$verbosityArg = @{
+    Default = $null;
+    Full = "--verbose";
+    Upload = "--verbose-upload";
+    Build = "--verbose-build"
+}
+
 ##Upload Args
 $uplodeArg = @('--verify', '--upload')
 
@@ -58,7 +72,15 @@ $doUpload = $true
 $waitForUser = $false
 $dieOnPreBuildFail = $false
 
+$verbosity = "Upload"
+
 $printfOpt = "Full"; $macroExpOpt = "Default"; $caretOpt = "None"
+
+#Will use "../.build/Folder_Name-1" if the current folder name is "Folder Name-1"
+$buildPath = ($PSScriptRoot + "\..\.build\" + ((Split-Path $PSScriptRoot -Leaf) -replace " ", "_"))
+
+#Overload $waitForUser if "-noInput" flag is givin
+$waitForUser = If ($noInput) {$false} else {$waitForUser}
 
 #Setup Program Vars
 $idePath = "C:\Program Files (x86)\Arduino\"
@@ -132,7 +154,7 @@ foreach ($lib in $includedLibs){
     $libPathName = $lib -replace " ", "_"
     if (-not (Test-Path "$libPath`\$libPathName")) {
         Write-Output "Installing $lib..."
-        Start-Process "$cliPath/arduino-cli.exe" -ArgumentList "lib install `"$lib`"" -wait -NoNewWindow
+        Start-Process "$cliPath\arduino-cli.exe" -ArgumentList "lib install `"$lib`"" -wait -NoNewWindow
     } else {
         Write-Output "$lib already installed."
     }
@@ -184,10 +206,22 @@ if ($doPreBuild){
 }
 
 #6) Uploading / Verifiying
+
+#6.1) Check if build path exsists and create it if it doesn't
 if ($doUpload) { Write-Output "Attempting to Upload $inoFile...." } 
     else { Write-Output "Starting verification of $inoFile" }
 
 $argList = ""
+
+if ($null -ne $buildPath){
+    if (-not (Test-Path -Path $buildPath -PathType Container)){
+        Write-Output "Creating Build Path: `"$buildPath`""
+        New-Item -path $buildPath -type directory > $null
+    }
+	Write-Output "Using Build Path: `"$buildPath`""
+    $buildPath = Convert-Path $buildPath
+	$argList += "--pref build.path=`"$buildPath`" "
+}
 
 if ($null -ne $printfCMDArgs[$printfOpt])
     {$argList += ($printfCMDArgs["CMD"] + '"' + $printfCMDArgs[$printfOpt] + "`" ")}
@@ -196,15 +230,21 @@ if ($null -ne $macroExspansionArgs[$macroExpOpt])
 if ($null -ne $showDiagCaretArgs[$caretOpt])
     {$argList += ($showDiagCaretArgs["CMD"] + '"' + $showDiagCaretArgs[$caretOpt] + "`" ")}
 
-$argList += "$serialPort $boardType "
+if ($null -ne $serialPort)
+    {$argList += "$serialPort $boardType "}
+if ($null -ne $verbosityArg[$verbosity])
+    {$argList += ($verbosityArg[$verbosity] + " ")}
+
 $argList += $uplodeArg[$doUpload] + " $inoFile"
 
 $arduinoDebug = Start-Process "$idePath`\arduino_debug.exe" -ArgumentList $argList -wait -NoNewWindow -PassThru
 
-if ($arduinoDebug.ExitCode -ne 0){
-    Write-Warning ":( Something went very wrong when uploading!"
-} else {
-    Write-Host "Done!" -ForegroundColor Green
+switch ($arduinoDebug.ExitCode){
+    0: { Write-Host ("`n"+"Done!") -ForegroundColor Green }
+    1: { Write-Warning ":( Build or Upload failed!" }
+    2: { Write-Warning ":| Could not locate Sketch: `"$inoFile`""}
+    3: { Write-Warning ":/ Invalid Commandline option entered!`nCurrent Arguments are: `"$argList`"" }
+    4: { Write-Warning ":0 Invalid preferance passed to `"--get-pref`""}
 }
 
 if ($waitForUser) { Read-Host 'Press Enter to continue' }
