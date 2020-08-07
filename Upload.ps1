@@ -60,7 +60,7 @@ $inoFile = "./main.ino"
 $preBuildCommand = "python ./genHeaders.py"
 $includedLibs = @('Adafruit BMP280 Library', 'SdFat', 'MPU6050')
 
-$doGitPull = $false
+$doGitPull = $true
 $doPreBuild = $true
 
 $doUpload = $true
