@@ -84,6 +84,8 @@ void setup(){
     Serial.println("=+=+= End DataTypes Example =+=+=");
     Serial.println("=~=~=~=~=~=~= Stop =~=~=~=~=~=~=");
 
+    Serial.println("=~=~=~=~=~=~= You will see this line if everything worked =~=~=~=~=~=~=");
+
 }
 
 void loop(){
