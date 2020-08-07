@@ -14,11 +14,6 @@
 6) Upload / Verifiy
 #>
 
-#PramaiterInput
-param (
-    [switch]$noInput = $false #If present don't 
-)
-
 #Extra Compiler Args
 ##Printf Command Args
 $printfCMDArgs = @{
@@ -63,11 +58,9 @@ $Choices = [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes", "&N
 #Setup User Vars
 $inoFile = "./main.ino"
 $preBuildCommand = "python ./genHeaders.py"
-$includedLibs = @() #@('Adafruit BMP280 Library', 'SdFat')
+$includedLibs = @('Adafruit BMP280 Library', 'SdFat', 'MPU6050')
 
 $doGitPull = $false
-$gitBranch = "master" #Change this if not working on master
-
 $doPreBuild = $true
 
 $doUpload = $true
@@ -81,8 +74,7 @@ $printfOpt = "Full"; $macroExpOpt = "Default"; $caretOpt = "None"
 #Will use "../.build/Folder_Name-1" if the current folder name is "Folder Name-1"
 $buildPath = ($PSScriptRoot + "\..\.build\" + ((Split-Path $PSScriptRoot -Leaf) -replace " ", "_"))
 
-#Overload $waitForUser if "-noInput" flag is givin
-$waitForUser = If ($noInput) {$false} else {$waitForUser}
+
 
 #Setup Program Vars
 $idePath = "C:\Program Files (x86)\Arduino\"
@@ -101,11 +93,11 @@ if ($doGitPull){
     if (Get-Command "git" -ErrorAction SilentlyContinue) {
         Write-Output "Git installed, checking if repo out of date..."
         #Write-Output "Updating remote...."
-        $pGitChange = Start-Process git -ArgumentList "diff origin/$gitBranch --quiet" -wait -NoNewWindow -PassThru
+        $pGitChange = Start-Process git -ArgumentList "diff origin/master --quiet" -wait -NoNewWindow -PassThru
         if ($pGitChange.ExitCode -eq 1){
             Write-Output "Diffrence in remote and local branch detected!"
             Write-Output "Here is what differs:"
-            Start-Process git -ArgumentList "--no-pager diff origin/$gitBranch --color-words" -wait -NoNewWindow
+            Start-Process git -ArgumentList "--no-pager diff origin/master --color-words" -wait -NoNewWindow
 
             Write-Output "You have the option to burn any local changes or ignore any changes made on the remote side."
             Write-Output "If you select [C]ancel then $inoFile will not be uploaded, allowing for a manual backup."
@@ -116,7 +108,6 @@ if ($doGitPull){
                     ) {
                 0 {
                     Write-Output "Nuking Local changes...."
-                    Start-Process git -ArgumentList "branch switch $gitBranch" -wait -NoNewWindow
                     Start-Process git -ArgumentList "reset --hard" -wait -NoNewWindow
                     Start-Process git -ArgumentList "pull" -wait -NoNewWindow
                     Write-Output "All local changes reset!"
@@ -242,12 +233,10 @@ $argList += $uplodeArg[$doUpload] + " $inoFile"
 
 $arduinoDebug = Start-Process "$idePath`\arduino_debug.exe" -ArgumentList $argList -wait -NoNewWindow -PassThru
 
-switch ($arduinoDebug.ExitCode){
-    0: { Write-Host ("`n"+"Done!") -ForegroundColor Green }
-    1: { Write-Warning ":( Build or Upload failed!" }
-    2: { Write-Warning ":| Could not locate Sketch: `"$inoFile`""}
-    3: { Write-Warning ":/ Invalid Commandline option entered!`nCurrent Arguments are: `"$argList`"" }
-    4: { Write-Warning ":0 Invalid preferance passed to `"--get-pref`""}
+if ($arduinoDebug.ExitCode -ne 0){
+    Write-Warning ":( Something went very wrong when uploading!"
+} else {
+    Write-Host ("`n"+"Done!") -ForegroundColor Green
 }
 
 if ($waitForUser) { Read-Host 'Press Enter to continue' }
