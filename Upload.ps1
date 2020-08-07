@@ -60,7 +60,8 @@ $inoFile = "./main.ino"
 $preBuildCommand = "python ./genHeaders.py"
 $includedLibs = @('Adafruit BMP280 Library', 'SdFat', 'MPU6050')
 
-$doGitPull = $true
+$doGitPull = $false
+$gitBranch = "PS-Update"
 $doPreBuild = $true
 
 $doUpload = $true
@@ -77,13 +78,19 @@ $buildPath = ($PSScriptRoot + "\..\.build\" + ((Split-Path $PSScriptRoot -Leaf) 
 
 
 #Setup Program Vars
-$idePath = "C:\Program Files (x86)\Arduino\"
+#$idePath = "C:\Program Files (x86)\Arduino\"
 $libPath = [System.Environment]::GetEnvironmentVariable('userprofile')+"\Documents\Arduino\libraries"
 
+$cacheZips = $true
+
 if ([System.Environment]::Is64BitOperatingSystem) {$arch = "64"} else {$arch = "32"}
-$cliPath = $PSScriptRoot+"/arduino-cli"
+$cliPath = $PSScriptRoot+"/arduino-files/cli"
 $cliURL  = "https://downloads.arduino.cc/arduino-cli/arduino-cli_latest_Windows_"+$arch+"bit.zip"
 $cliZipName = "arduino-cli.zip"
+
+$idePath = $PSScriptRoot+"/arduino-files/ide"
+$ideURL = "https://downloads.arduino.cc/arduino-1.8.13-windows.zip"
+$ideZipName = "arduino-ide.zip"
 
 $serialPort = $null
 $boardType = $null
@@ -93,11 +100,11 @@ if ($doGitPull){
     if (Get-Command "git" -ErrorAction SilentlyContinue) {
         Write-Output "Git installed, checking if repo out of date..."
         #Write-Output "Updating remote...."
-        $pGitChange = Start-Process git -ArgumentList "diff origin/PS-Update --quiet" -wait -NoNewWindow -PassThru
+        $pGitChange = Start-Process git -ArgumentList "diff origin/$gitBranch --quiet" -wait -NoNewWindow -PassThru
         if ($pGitChange.ExitCode -eq 1){
             Write-Output "Diffrence in remote and local branch detected!"
             Write-Output "Here is what differs:"
-            Start-Process git -ArgumentList "--no-pager diff origin/PS-Update --color-words" -wait -NoNewWindow
+            Start-Process git -ArgumentList "--no-pager diff origin/$gitBranch --color-words" -wait -NoNewWindow
 
             Write-Output "You have the option to burn any local changes or ignore any changes made on the remote side."
             Write-Output "If you select [C]ancel then $inoFile will not be uploaded, allowing for a manual backup."
@@ -130,17 +137,54 @@ if ($doGitPull){
     Write-Output "Not attemping to download latest version from git!"
 }
 
+$tmpProgressPreference = $global:ProgressPreference
+$ProgressPreference = "SilentlyContinue"
+#2.-1) Download the IDE Locally
+if (-not (Test-Path "$idePath`\arduino_debug.exe")){
+    Write-Output "Arduino IDE not present."
+    if (-not (Test-Path $idePath)) { [void](New-Item -Path $idePath -ItemType Directory) }
+    if (-not $cacheZips -Or ($cacheZips -And -not (Test-Path "$idePath/$ideZipName"))){
+        Write-Output "Attemping to Download, This will hang...."
+        Write-Output "Please Wait..."
+        Invoke-WebRequest $ideURL -OutFile "$idePath/$ideZipName"
+        Write-Output "IDE Downloaded."
+    }
+    Write-Output "Extracting...."
+    Expand-Archive -Force "$idePath/$ideZipName" $idePath
+    Write-Output "IDE Extracted."
+    Write-Output "Moving all files...."
+    $ideFolder = ((Get-ChildItem -dir $idePath)[0].FullName)
+    Get-ChildItem -Path $ideFolder | Move-Item -Destination $idePath
+    Remove-Item $ideFolder
+    Write-Output "Moved all files"
+    Add-Content -Path "$idePath`\arduino_debug.l4j.ini" -Value "`n-DDEBUG=false"
+    if (-not $cacheZips){
+        Write-Output "Not Caching Zips, Cleaning Up...."
+        Remove-Item "$idePath/$ideZipName"
+    }
+    Write-Output "Arduino-IDE Downloaded and Setup!"
+}
+
 #2.0) Download the CLI if Needed
-if (-not (Test-Path $cliPath)){
-    Write-Output "Arduino CLI not present. Downloading...."
-    New-Item -Path $cliPath -ItemType Directory
-    Invoke-WebRequest $cliURL -OutFile "$cliPath/$cliZipName"
-    Write-Output "CLI Downloaded. Extracting...."
+if (-not (Test-Path "$cliPath`/arduino-cli.exe")){
+    Write-Output "Arduino CLI not present."
+    if (-not (Test-Path $cliPath)) { [void](New-Item -Path $cliPath -ItemType Directory) }
+    if (-not $cacheZips -Or ($cacheZips -And -not (Test-Path "$cliPath/$cliZipName"))){
+        Write-Output "Attemping to Download, This will hang...."
+        Write-Output "Please Wait..."
+        Invoke-WebRequest $cliURL -OutFile "$cliPath/$cliZipName"
+        Write-Output "CLI Downloaded. Extracting...."
+    }
     Expand-Archive -Force "$cliPath/$cliZipName" $cliPath
-    Write-Output "CLI Extracted. Cleaning Up...."
-    Remove-Item "$cliPath/$cliZipName"
+    Write-Output "CLI Extracted."
+    if (-not $cacheZips){
+        Write-Output "Not Caching Zips, Cleaning Up...."
+        Remove-Item "$cliPath/$cliZipName"
+    }
     Write-Output "Arduino-CLI Downloaded and Setup!"
 }
+
+$global:ProgressPreference = $tmpProgressPreference
 
 #3) Install Libs
 Write-Output "Checking libs present..."

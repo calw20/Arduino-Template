@@ -1,4 +1,4 @@
 /.vscode
 genHeaders.py
 build_headers.h
-/arduino-cli
+/arduino-files
