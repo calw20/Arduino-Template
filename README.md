@@ -33,6 +33,9 @@ The powershell script [Upload](Upload.ps1) will automatically download the Ardui
 run a pre-build command and upload the set file all with one click!
 >:notebook_with_decorative_cover: Note: You may need to run `Set-ExecutionPolicy RemoteSigned` or equivalent in an _administrator_ powershell before the script can be run.
 
+### Contributing and Further setup instructions
+
+For further in-depth information regarding workspace setup and contributing to this template please see the [Setup](SETUP.md) and [Contributing](CONTRIBUTING.md) files respectively.
 
 ## License & Notes
 

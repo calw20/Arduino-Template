@@ -16,7 +16,7 @@
 
 #PramaiterInput
 param (
-    [switch]$noInput = $false
+    [switch]$noInput = $false #If present don't 
 )
 
 #Extra Compiler Args
@@ -66,6 +66,8 @@ $preBuildCommand = "python ./genHeaders.py"
 $includedLibs = @() #@('Adafruit BMP280 Library', 'SdFat')
 
 $doGitPull = $false
+$gitBranch = "master" #Change this if not working on master
+
 $doPreBuild = $true
 
 $doUpload = $true
@@ -99,11 +101,11 @@ if ($doGitPull){
     if (Get-Command "git" -ErrorAction SilentlyContinue) {
         Write-Output "Git installed, checking if repo out of date..."
         #Write-Output "Updating remote...."
-        $pGitChange = Start-Process git -ArgumentList "diff origin/master --quiet" -wait -NoNewWindow -PassThru
+        $pGitChange = Start-Process git -ArgumentList "diff origin/$gitBranch --quiet" -wait -NoNewWindow -PassThru
         if ($pGitChange.ExitCode -eq 1){
             Write-Output "Diffrence in remote and local branch detected!"
             Write-Output "Here is what differs:"
-            Start-Process git -ArgumentList "--no-pager diff origin/master --color-words" -wait -NoNewWindow
+            Start-Process git -ArgumentList "--no-pager diff origin/$gitBranch --color-words" -wait -NoNewWindow
 
             Write-Output "You have the option to burn any local changes or ignore any changes made on the remote side."
             Write-Output "If you select [C]ancel then $inoFile will not be uploaded, allowing for a manual backup."
@@ -114,6 +116,7 @@ if ($doGitPull){
                     ) {
                 0 {
                     Write-Output "Nuking Local changes...."
+                    Start-Process git -ArgumentList "branch switch $gitBranch" -wait -NoNewWindow
                     Start-Process git -ArgumentList "reset --hard" -wait -NoNewWindow
                     Start-Process git -ArgumentList "pull" -wait -NoNewWindow
                     Write-Output "All local changes reset!"
