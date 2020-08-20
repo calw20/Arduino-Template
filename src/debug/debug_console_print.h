@@ -1,6 +1,7 @@
 //Print to console debug macros
 //See main.ino for an example
-//Licensed under MIT, See the LICENCE file. 
+//Licensed under MIT, See the LICENCE file.
+//https://github.com/calw20/Arduino-Template
 //Cal.W 2020
 #ifndef __DEBUG_CONSOLE_PRINT__
 #define __DEBUG_CONSOLE_PRINT__
