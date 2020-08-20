@@ -1,11 +1,14 @@
 {
+    "env":{
+        "otherIncludePaths": ["${env:userprofile}\\Documents\\Arduino\\libraries\\**"]
+    },
     "configurations": [
         {
             "name": "Win32",
             "includePath": [
                 "C:\\Program Files (x86)\\Arduino\\tools\\**",
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
-                "${env:userprofile}\\Documents\\Arduino\\libraries\\**"
+                "${otherIncludePaths}"
             ],
             "forcedInclude": [
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h"

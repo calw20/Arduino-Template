@@ -13,7 +13,6 @@
 #include "src/debug/debug.h"
 #include "src/data_types/data_types.h"
 
-
 class Mod2 : public CrashableModule {
     public:
         Mod2(UnCrashable &uncrashableParent, bool addSelfToParent = true) 
