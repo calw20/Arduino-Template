@@ -1,0 +1,5 @@
+//Comment this line out to enable the PS Debugger
+//Fun Fact: This does not work :/
+[
+    { "key": "f5", "command": "workbench.action.tasks.runTask", "args": "Upload Arduino Code" }
+]
