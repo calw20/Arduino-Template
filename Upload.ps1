@@ -14,11 +14,12 @@
 #>
 
 param (
-    [string]$jsonFilePath = $PSScriptRoot + "/upload_config.json",
-    [switch]$forceNoInput = $false,
+    [string]$jsonFilePath   = $PSScriptRoot + "/upload_config.json",
+    [switch]$forceNoInput   = $false,
     [switch]$forceGitIgnore = $false,
-    [switch]$forceGitNuke = $false,
-    [switch]$generateJSON = $false
+    [switch]$forceGitNuke   = $false,
+    [switch]$forceIniUpdate = $false,
+    [switch]$generateJSON   = $false
 )
 
 #Extra Compiler Args
@@ -58,7 +59,8 @@ $verbosityArg = @{
 $uplodeArg = @('--verify', '--upload')
 
 ##Standard Choices
-$Choices = [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes", "&No", "&Cancel")
+$ChoiceYN =  [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes", "&No")
+$ChoiceYNC = [System.Management.Automation.Host.ChoiceDescription[]] @("&Yes", "&No", "&Cancel")
 
 ##Get the git branch
 $gitBranch = ((git symbolic-ref --short HEAD) | Out-String).Trim()
@@ -85,6 +87,8 @@ $settings = @{
 
     cacheZips = $true;
     
+    askIniUpdate = $true;
+
     #Default Values - If this is null then the default value will be used :/
     buildPath = $null;
     libPath = $null;
@@ -110,7 +114,7 @@ if (Test-Path $jsonFilePath) {
         }    
     }
 } elseif ($generateJSON) {
-    $settings | ConvertTo-Json -depth 2 | Out-File $jsonFilePath
+    $settings | ConvertTo-Json -depth 32 | Out-File $jsonFilePath
 }
 
 #Will use "../.build/Folder_Name-1" if the current folder name is "Folder Name-1"
@@ -163,7 +167,7 @@ if ($settings["doGitPull"]){
             $gitOption = $(if ($forceGitNuke -Or $forceGitIgnore) {if ($forceGitIgnore) {1} else {0}} #Always take the non-nuke option
                             else {$host.UI.PromptForChoice(
                                     "", "Would you like to pull the latest version removing any LOCAL changes?",
-                                    $Choices, 1)}
+                                    $ChoiceYNC, 1)}
                         )
             switch ($gitOption) {
                 0 {
@@ -332,6 +336,56 @@ if ($null -ne $verbosityArg[$settings["verbosity"]])
     {$argList += ($verbosityArg[$settings["verbosity"]] + " ")}
 
 $argList += ($uplodeArg[$settings["doUpload"]] + " " + $settings["inoFile"])
+
+#Ask to disable the verbose output.
+if ($settings["askIniUpdate"] -And (Test-Path "$idePath`\arduino_debug.l4j.ini") -And -not (Select-String -Path "$idePath`\arduino_debug.l4j.ini" -Pattern "-DDEBUG=false" -SimpleMatch -Quiet)) {
+    Write-Output "It's detected that verbose output is enabled. This can be very anyoing / cluttering so disableing it is highly recomened."
+    Write-Output "Note: Depending on the arduino install location, a request for administrative privliges may be requested."
+    $updateIniFile = $(if ($forceIniUpdate) {0} else {$host.UI.PromptForChoice("", "Would you like to disable the *very* verbose arduino console output?", $ChoiceYN, 0)})
+
+    if ($updateIniFile -eq 0) {
+        Try {
+            Write-Output "Attempting to disable verbose debug output..."
+            Add-Content -LiteralPath ("$idePath`\arduino_debug.l4j.ini") -Value "`n-DDEBUG=false" -ErrorAction Stop
+        } Catch {
+            Write-Output "The required file is protected so an eleveation request was required."
+            Try {
+                Start-Process PowerShell -ErrorAction Stop -Wait -Verb RunAs "-NoProfile -ExecutionPolicy Bypass -Command `"cd '$pwd'; Add-Content -LiteralPath '$idePath`\arduino_debug.l4j.ini'  -Value '`n-DDEBUG=false';`"";
+            } catch {
+                Write-Output "Failed to open file."
+            }
+        } Finally {
+            if (Select-String -Path "$idePath`\arduino_debug.l4j.ini" -Pattern "-DDEBUG=false" -SimpleMatch -Quiet) {
+                if ((Select-String -Path "$idePath`\arduino_debug.l4j.ini" -Pattern "-DDEBUG=true" -SimpleMatch -Quiet)) {
+                    Try {
+                        Write-Output "Debug enable flag detected in file, attempting to remove...."
+                        (Get-Content -LiteralPath ("$idePath`\arduino_debug.l4j.ini")) -replace "-DDEBUG=true","" | Out-File -LiteralPath ("$idePath`\arduino_debug.l4j.ini") -ErrorAction Stop
+                    } catch {
+                        Write-Output "The required file is protected so an eleveation request was required."
+                        Try {
+                            Start-Process PowerShell -ErrorAction Stop -Wait -Verb RunAs "-NoProfile -ExecutionPolicy Bypass -Command `"cd '$pwd'; (Get-Content -LiteralPath '$idePath`\arduino_debug.l4j.ini') -replace '-DDEBUG=true','' | Out-File -LiteralPath '$idePath`\arduino_debug.l4j.ini';`"";
+                        } catch {
+                            Write-Output "Failed to open file."
+                        }
+                    }
+                }
+                Write-Output "Verbose output disabled."
+            } else {
+                Write-Output "Verbose output has not been disabled. Unless you set 'askIniUpdate' to true in the JSON file you will not see this promt again."
+            }
+        }
+    } else {
+        Write-Output "Verbose output has not been disabled. Unless you set 'askIniUpdate' to true in the JSON file you will not see this promt again."
+    }
+
+    $tempJsonData = Get-Content $jsonFilePath | ConvertFrom-Json
+    Try{
+        $tempJsonData.askIniUpdate = $false
+    } Catch {
+        $tempJsonData | Add-Member -Name "askIniUpdate" -value $false -MemberType NoteProperty    
+    }
+    $tempJsonData | ConvertTo-Json -depth 32 | Out-File $jsonFilePath
+}
 
 $arduinoDebug = Start-Process "$idePath`\arduino_debug.exe" -ArgumentList $argList -wait -NoNewWindow -PassThru
 

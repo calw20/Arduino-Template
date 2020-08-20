@@ -5,12 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Compile and Upload to Arduino",
+            "name": "Compile and Upload to Arduino (PS Extention Required)",
             "type": "PowerShell",
             "request": "launch",
             "script": "${workspaceFolder}/Upload.ps1",
             "cwd": "${workspaceFolder}",
-            "args": ["-noInput"]
+            "args": ["-forceNoInput"]
         }
     ]
 }
