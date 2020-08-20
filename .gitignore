@@ -2,3 +2,5 @@
 genHeaders.py
 build_headers.h
 /arduino-files
+*.code-workspace
+*-ncomp*
