@@ -1,6 +1,9 @@
 {
     "env":{
-        "otherIncludePaths": ["${env:userprofile}\\Documents\\Arduino\\libraries\\**"]
+         "otherIncludePaths": [
+			"${env:userprofile}\\Documents\\Arduino\\libraries\\**",
+			"${workspaceFolder}\\src\\**"
+		]
     },
     "configurations": [
         {
