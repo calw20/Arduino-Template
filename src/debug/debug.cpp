@@ -1,5 +1,6 @@
 //The main debug handling class
 //Licensed under MIT, See the LICENCE file.
+//https://github.com/calw20/Arduino-Template
 //Cal.W 2020
 #include "debug.h"
 
