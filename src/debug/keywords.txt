@@ -8,7 +8,7 @@
 #Classes
 GenericCrashable    KEYWORD1
 CrashableModule	    KEYWORD1
-UnCrashable	        KEYWORD1
+UnCrashable	    KEYWORD1
 CrashableModule	    KEYWORD1
 
 #################################################
@@ -17,7 +17,7 @@ CrashableModule	    KEYWORD1
 
 #Debug Keywords
 ##Class Constructors
-UnCrashable	    KEYWORD2
+UnCrashable	KEYWORD2
 CrashableModule	KEYWORD2
 
 ##Class Methods
@@ -26,8 +26,8 @@ genericError	KEYWORD2
 minorFailure	KEYWORD2
 majorFailure	KEYWORD2
 criticalFailure	KEYWORD2
-printDebug	    KEYWORD2
-getStatus	    KEYWORD2
+printDebug	KEYWORD2
+getStatus	KEYWORD2
 setStatus       KEYWORD2
 printErrorInfo  KEYWORD2
 crashParentTree KEYWORD2
@@ -40,27 +40,30 @@ MINOR_FAIL           KEYWORD2
 MAJOR_FAIL           KEYWORD2
 CRITICAL_FAIL        KEYWORD2
 OTHER_FAIL           KEYWORD2
-CHK_LETTER	         KEYWORD2
+CHK_LETTER	     KEYWORD2
 
 #MINOR_FAIL     KEYWORD2
 #MAJOR_FAIL     KEYWORD2
 #CRITICAL_FAIL	KEYWORD2
 
 #Debug Console Keywords
-DBG_PRINT	    KEYWORD2
-DBG_PRINTLN	    KEYWORD2
-DBG_FPRINT	    KEYWORD2
+DBG_PRINT	KEYWORD2
+DBG_PRINTLN	KEYWORD2
+DBG_FPRINT	KEYWORD2
 DBG_FPRINTLN	KEYWORD2
 DBG_FPRINT_SV	KEYWORD2
 DBG_FPRINT_SVLN	KEYWORD2
-DBG_PRINTF	    KEYWORD2
-DBG_PRINTFN	    KEYWORD2
-DBG_FPRINTF	    KEYWORD2
+DBG_PRINTF	KEYWORD2
+DBG_PRINTFN	KEYWORD2
+DBG_FPRINTF	KEYWORD2
 DBG_FPRINTFN	KEYWORD2
 
 #Printf Keywords
 printf	KEYWORD2
 printfn	KEYWORD2
+
+#Misc Function Keywords
+hexdump KEYWORD2
 
 #################################################
 #Constants and Structures
@@ -68,10 +71,10 @@ printfn	KEYWORD2
 
 #Debug Keywords
 ##Compiler Flags
-BUILD_DATE	    LITERAL1   PREPROCESSOR
+BUILD_DATE	LITERAL1   PREPROCESSOR
 BUILD_VERSION   LITERAL1   PREPROCESSOR
 CRITICAL_LED    LITERAL1   PREPROCESSOR
-ChrashType	    KEYWORD3
+ChrashType	KEYWORD3
 CrashTypeText   KEYWORD3
 
 #Debug Console Keywords
