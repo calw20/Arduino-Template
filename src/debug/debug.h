@@ -128,6 +128,6 @@ class CrashableModule : public GenericCrashable{
 
 //Original C code by "paxdiablo"; https://stackoverflow.com/a/7776146
 //Adapted by Cal.W 2020-01-28
-void hexDump (const char * desc, const void * addr, const int len)
+void hexDump(const char * desc, const void * addr, const int len);
 
 #endif
