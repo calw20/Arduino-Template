@@ -124,4 +124,10 @@ class CrashableModule : public GenericCrashable{
 
 #define CHK_LETTER(letter) printValues.indexOf(letter) > -1
 
+//Other Debug Functions
+
+//Original C code by "paxdiablo"; https://stackoverflow.com/a/7776146
+//Adapted by Cal.W 2020-01-28
+void hexDump (const char * desc, const void * addr, const int len)
+
 #endif

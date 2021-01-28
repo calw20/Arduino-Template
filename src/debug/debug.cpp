@@ -132,3 +132,57 @@ void CrashableModule::crashParentTree(CrashType crashType, const char* func, con
     //[TODO] Decide recovery is assumed....
     //inError = false; //We recovered from the error?!
 };
+
+//Original C code by "paxdiablo"; https://stackoverflow.com/a/7776146
+//Adapted by Cal.W 2020-01-28
+void hexDump(const char * desc, const void * addr, const int len) {
+    int i;
+    unsigned char buff[17];
+    const unsigned char * pc = (const unsigned char *)addr;
+
+    //Output description if given.
+    if (desc != NULL)
+        DBG_PRINTF("%s:\n\r", desc);
+
+    //Length checks.
+    if (len == 0) {
+        DBG_PRINTF("  Zero Length\n\r");
+        return;
+    }
+    else if (len < 0) {
+        DBG_PRINTF("  Negative Length: %d\n\r", len);
+        return;
+    }
+
+    //Process every byte in the data.
+    for (i = 0; i < len; i++) {
+        //Multiple of 16 means new line (with line offset).
+        if ((i % 16) == 0) {
+            //Don't print ASCII buffer for the "zeroth" line.
+            if (i != 0)
+                DBG_PRINTF("  %s\n\r", buff);
+
+            //Output the offset.
+            DBG_PRINTF("  %04x ", i);
+        }
+
+        //Now the hex code for the specific character.
+        DBG_PRINTF(" %02x", pc[i]);
+
+        //And buffer a printable ASCII character for later.
+        if ((pc[i] < 0x20) || (pc[i] > 0x7e)) //isprint() may be better.
+            buff[i % 16] = '.';
+        else
+            buff[i % 16] = pc[i];
+        buff[(i % 16) + 1] = '\0';
+    }
+
+    //Pad out last line if not exactly 16 characters.
+    while ((i % 16) != 0) {
+        DBG_PRINTF("   ");
+        i++;
+    }
+
+    //And print the final ASCII buffer.
+    DBG_PRINTF("  %s\n\r", buff);
+}
