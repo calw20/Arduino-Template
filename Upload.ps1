@@ -1,6 +1,5 @@
 #Arduino Uploader V2.0
 #Automagically download required libs, compile ino then upload the binary to an Arudino
-#From https://github.com/calw20/Arduino-Template
 #Cal.W 2020
 
 <#
@@ -145,8 +144,12 @@ if (-not (Test-Path "$globalIDEPath`\arduino_debug.exe") -Or (Test-Path "$localI
 $ideURL = $(if(-not [string]::IsNullOrEmpty($settings["ideURL"])) {$settings["ideURL"]} Else {"https://downloads.arduino.cc/arduino-1.8.13-windows.zip"})
 $ideZipName = $(if(-not [string]::IsNullOrEmpty($settings["ideZipName"])) {$settings["ideZipName"]} Else {"arduino-ide.zip"})
 
-$serialPort = $(if(-not [string]::IsNullOrEmpty($settings["serialPort"])) {$settings["serialType"]} Else {$null})
+$serialPort = $(if(-not [string]::IsNullOrEmpty($settings["serialPort"])) {$settings["serialPort"]} Else {$null})
 $boardType = $(if(-not [string]::IsNullOrEmpty($settings["boardType"])) {$settings["boardType"]} Else {$null})
+
+Write-Host("Test")
+Write-Host($serialPort)
+Write-Host($boardType)
 
 if ($forceNoInput) { $settings["waitForUser"] = $false }
 
@@ -278,15 +281,27 @@ $process.StartInfo = $procStartInfo
 $output = $process.StandardOutput.ReadToEnd() 
 $process.WaitForExit()
 
+
+Write-Host("Test")
+Write-Host($serialPort)
+Write-Host($boardType)
+
 $boards = $output | ConvertFrom-Json
 if ($null -eq $boards[0].address){
     Write-Output "No Arduino found! Only going to verifiy the program."
     $settings["doUpload"] = $false
-} else {
+} elseif ($null -eq $serialPort -and $null -eq $null) {
     Write-Output ("Found a " + $boards[0].boards.name + " on " + $boards[0].address)
     $serialPort = "--port " + $boards[0].address
     $boardType = "--board " + $boards[0].boards.FQBN;
+} else {
+    Write-Output ("Found a " + $boards[0].boards.name + " on " + $boards[0].address)
+    $serialPort = "--port " + $serialPort
+    $boardType = "--board " + $boardType;
 }
+
+Write-Host($serialPort)
+Write-Host($boardType)
 
 #5) Run PreBuild
 if ($settings["doPreBuild"] -And -not [string]::IsNullOrEmpty($settings["preBuildCommand"])){
@@ -387,6 +402,8 @@ if ($settings["askIniUpdate"] -And (Test-Path "$idePath`\arduino_debug.l4j.ini")
     }
     $tempJsonData | ConvertTo-Json -depth 32 | Out-File $jsonFilePath
 }
+
+Write-Host($argList)
 
 $arduinoDebug = Start-Process "$idePath`\arduino_debug.exe" -ArgumentList $argList -wait -NoNewWindow -PassThru
 
