@@ -147,10 +147,6 @@ $ideZipName = $(if(-not [string]::IsNullOrEmpty($settings["ideZipName"])) {$sett
 $serialPort = $(if(-not [string]::IsNullOrEmpty($settings["serialPort"])) {$settings["serialPort"]} Else {$null})
 $boardType = $(if(-not [string]::IsNullOrEmpty($settings["boardType"])) {$settings["boardType"]} Else {$null})
 
-Write-Host("Test")
-Write-Host($serialPort)
-Write-Host($boardType)
-
 if ($forceNoInput) { $settings["waitForUser"] = $false }
 
 #1) If wanted, check if git is installed then attempt to update.
@@ -281,11 +277,6 @@ $process.StartInfo = $procStartInfo
 $output = $process.StandardOutput.ReadToEnd() 
 $process.WaitForExit()
 
-
-Write-Host("Test")
-Write-Host($serialPort)
-Write-Host($boardType)
-
 $boards = $output | ConvertFrom-Json
 if ($null -eq $boards[0].address){
     Write-Output "No Arduino found! Only going to verifiy the program."
@@ -299,9 +290,6 @@ if ($null -eq $boards[0].address){
     $serialPort = "--port " + $serialPort
     $boardType = "--board " + $boardType;
 }
-
-Write-Host($serialPort)
-Write-Host($boardType)
 
 #5) Run PreBuild
 if ($settings["doPreBuild"] -And -not [string]::IsNullOrEmpty($settings["preBuildCommand"])){
@@ -402,8 +390,6 @@ if ($settings["askIniUpdate"] -And (Test-Path "$idePath`\arduino_debug.l4j.ini")
     }
     $tempJsonData | ConvertTo-Json -depth 32 | Out-File $jsonFilePath
 }
-
-Write-Host($argList)
 
 $arduinoDebug = Start-Process "$idePath`\arduino_debug.exe" -ArgumentList $argList -wait -NoNewWindow -PassThru
 
